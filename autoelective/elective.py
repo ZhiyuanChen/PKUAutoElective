@@ -83,7 +83,7 @@ class ElectiveClient(BaseClient):
             ''.join(random.choice(string.digits + string.ascii_letters) for _ in range(52)),
             random.randint(184960435, 1984960435),
         )
-        headers = kwargs.pop("headers", {}) # no Referer
+        headers = kwargs.pop("headers", {})  # no Referer
         headers["Cookie"] = dummy_cookie  # 必须要指定一个 Cookie 否则报 101 status_code
         r = self._get(
             url=ElectiveURL.SSOLogin,
@@ -100,7 +100,7 @@ class ElectiveClient(BaseClient):
     def sso_login_dual_degree(self, sida, sttp, referer, **kwargs):
         assert len(sida) == 32
         assert sttp in ("bzx", "bfx")
-        headers = kwargs.pop("headers", {}) # no Referer
+        headers = kwargs.pop("headers", {})  # no Referer
         r = self._get(
             url=ElectiveURL.SSOLogin,
             params={
@@ -129,7 +129,7 @@ class ElectiveClient(BaseClient):
             url=ElectiveURL.HelpController,
             hooks=_hooks_check_title,
             **kwargs,
-        ) # 无 Referer
+        )  # 无 Referer
         return r
 
     def get_ShowResults(self, **kwargs):
@@ -148,7 +148,10 @@ class ElectiveClient(BaseClient):
         headers = _get_headers_with_referer(kwargs)
         headers["Cache-Control"] = "max-age=0"
         r = self._get(
-            url=ElectiveURL.SupplyCancel+"?xh="+str(username),
+            url=ElectiveURL.SupplyCancel,
+            params={
+                "xh": username
+            },
             headers=headers,
             hooks=_hooks_check_title,
             **kwargs,
@@ -164,7 +167,8 @@ class ElectiveClient(BaseClient):
             url=ElectiveURL.Supplement,
             params={
                 "netui_pagesize": "electableListGrid;20",
-                "netui_row": "electableListGrid;%s" % ( (page - 1) * 20 ),
+                "netui_row": "electableListGrid;%s" % ((page - 1) * 20),
+                "xh": username
             },
             headers=headers,
             hooks=_hooks_check_title,
